@@ -1,19 +1,19 @@
 <template>
-  <!-- Show weather ONLY if real data exists -->
-  <section v-if="hasWeatherData" class="panel">
+ 
+  <section v-if="data" class="panel">
     <header class="panel-header">
       <h2 class="location">
-        {{ weatherData.value.location.name }}, {{ weatherData.value.location.country }}
+        {{ data.location.name }}, {{ data.location.country }}
       </h2>
-      <p class="updated">Local time: {{ weatherData.value.location.localtime }}</p>
+      <p class="updated">Local time: {{ data.localtime }}</p>
     </header>
 
     <div class="today-main">
       <div class="today-temp">
         <div class="temp-now">
-          {{ Math.round(weatherData.value.current.temp_f) }}°F
+          {{ Math.round(data.current.temp_f) }}°F
         </div>
-        <p class="condition">{{ weatherData.value.current.condition.text }}</p>
+        <p class="condition">{{ data.current.condition.text }}</p>
 
         <p class="high-low" v-if="today">
           H: {{ Math.round(today.day.maxtemp_f) }}°F ·
@@ -22,16 +22,17 @@
       </div>
 
       <div class="today-extra">
-        <p>Feels like:
-          <strong>{{ Math.round(weatherData.value.current.feelslike_f) }}°F</strong>
+        <p>
+          Feels like:
+          <strong>{{ Math.round(data.current.feelslike_f) }}°F</strong>
         </p>
-        <p>Humidity: <strong>{{ weatherData.value.current.humidity }}%</strong></p>
-        <p>Wind: <strong>{{ weatherData.value.current.wind_mph }} mph</strong></p>
+        <p>Humidity: <strong>{{ data.current.humidity }}%</strong></p>
+        <p>Wind: <strong>{{ data.current.wind_mph }} mph</strong></p>
       </div>
     </div>
   </section>
 
-  <!-- Show welcome screen BEFORE first search -->
+
   <section v-else class="panel">
     <h2>Welcome</h2>
     <p>Search for a city above to see current weather, hourly chart, and 5-day forecast.</p>
@@ -41,19 +42,16 @@
 <script setup>
 import { inject, computed } from 'vue'
 
-const weatherData = inject('weatherData')
 
-/* Only true if data exists AND contains a city name */
-const hasWeatherData = computed(() => {
-  return !!(
-    weatherData.value &&
-    weatherData.value.location &&
-    weatherData.value.location.name
-  )
+const weatherDataRef = inject('weatherData')
+
+const data = computed(() => {
+  return weatherDataRef?.value ?? null
 })
 
+
 const today = computed(() => {
-  return weatherData?.value?.forecast?.forecastday?.[0] ?? null
+  return data.value?.forecast?.forecastday?.[0] ?? null
 })
 </script>
 

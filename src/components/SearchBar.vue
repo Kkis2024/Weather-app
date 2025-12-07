@@ -1,26 +1,30 @@
+<script setup>
+import { ref } from 'vue'
+
+
+const emit = defineEmits(['search'])
+
+const query = ref('')
+
+function handleSubmit() {
+  const trimmed = query.value.trim()
+  if (!trimmed) return
+
+  emit('search', trimmed)
+}
+</script>
+
 <template>
-  <form @submit.prevent="submitSearch">
-    <input 
-      v-model="searchInput"
+  <form @submit.prevent="handleSubmit">
+    <input
+      v-model="query"
       type="text"
       placeholder="Search city or ZIP"
+      aria-label="Search city or ZIP"
     />
     <button type="submit">Search</button>
   </form>
 </template>
-
-<script setup>
-import { ref } from 'vue';
-
-const searchInput = ref('');
-const emit = defineEmits(['search']);
-
-function submitSearch() {
-  if (!searchInput.value.trim()) return;
-  emit('search', searchInput.value.trim());
-  searchInput.value = '';
-}
-</script>
 
 <style scoped>
 form {

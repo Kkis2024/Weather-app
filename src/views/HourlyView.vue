@@ -8,23 +8,23 @@ import {
   LinearScale,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  BarElement
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
-
 
 ChartJS.register(
   LineElement,
   PointElement,
   CategoryScale,
   LinearScale,
+  BarElement,
   Title,
   Tooltip,
   Legend
 )
 
 const weatherData = inject('weatherData')
-
 
 const chartData = computed(() => {
   if (!weatherData?.value) return null
@@ -41,16 +41,22 @@ const chartData = computed(() => {
       {
         label: 'Temperature (°F)',
         data: tempsF,
-        borderWidth: 2,
-        tension: 0.3,
+        borderColor: '#4fc3f7',           
+        backgroundColor: '#4fc3f7',
+        borderWidth: 3,
+        pointRadius: 4,                   
+        pointHoverRadius: 6,
+        pointBackgroundColor: '#ffffff',  
+        tension: 0.4,
         yAxisID: 'y'
       },
       {
         label: 'Rain (mm)',
         data: rainMm,
-        borderWidth: 2,
-        borderDash: [5, 5],
-        tension: 0.3,
+        type: 'bar',
+        backgroundColor: 'rgba(173, 216, 230, 0.8)', 
+        borderColor: 'rgba(255, 255, 255, 0.9)',
+        borderWidth: 1,
         yAxisID: 'y1'
       }
     ]
@@ -67,18 +73,36 @@ const chartOptions = {
     y: {
       type: 'linear',
       position: 'left',
-      title: { display: true, text: '°F' }
+      title: { display: true, text: '°F' },
+      grid: {
+        color: 'rgba(255, 255, 255, 0.1)'
+      },
+      ticks: {
+        color: '#ffffff'
+      }
     },
     y1: {
       type: 'linear',
       position: 'right',
       title: { display: true, text: 'mm' },
-      grid: { drawOnChartArea: false }
+      grid: { drawOnChartArea: false },
+      ticks: {
+        color: '#ffffff'
+      }
+    },
+    x: {
+      grid: {
+        color: 'rgba(255, 255, 255, 0.1)'
+      },
+      ticks: {
+        color: '#ffffff'
+      }
     }
   },
   plugins: {
     legend: {
       labels: {
+        color: '#ffffff',
         font: { size: 12 }
       }
     }

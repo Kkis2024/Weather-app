@@ -1,68 +1,78 @@
 <script setup>
-import { ref, provide } from 'vue';
-import { RouterLink, RouterView } from 'vue-router';
-import SearchBar from './components/SearchBar.vue';
-import { getWeather } from './services/weatherService';
+import { ref, provide, computed } from 'vue'
+import { RouterLink, RouterView } from 'vue-router'
+import SearchBar from './components/SearchBar.vue'
+import SavedLocations from './components/SavedLocations.vue'
+import { getWeather } from './services/weatherService'
 
-const weatherData = ref(null);
-const currentLocation = ref('');
+const weatherData = ref(null)
+const currentLocation = ref('')
+
 
 async function handleSearch(query) {
   try {
-    const data = await getWeather(query);
-    weatherData.value = data;
-    currentLocation.value = data.location.name;
+    const data = await getWeather(query)
+    weatherData.value = data
+    currentLocation.value = data.location.name
   } catch (error) {
-    console.error(error);
-    alert('Could not find that location. Please try again.');
+    console.error(error)
+    alert('Could not find that location. Please try again.')
   }
 }
 
-import SavedLocations from './components/SavedLocations.vue';
 
-const savedLocations = ref([]);
-
+const savedLocations = ref([])
 
 if (localStorage.getItem('savedLocations')) {
-  savedLocations.value = JSON.parse(localStorage.getItem('savedLocations'));
+  savedLocations.value = JSON.parse(localStorage.getItem('savedLocations'))
 }
-
 
 function updateLocalStorage() {
-  localStorage.setItem('savedLocations', JSON.stringify(savedLocations.value));
+  localStorage.setItem('savedLocations', JSON.stringify(savedLocations.value))
 }
 
-
 function saveCurrentLocation() {
-  if (!weatherData.value) return;
-  const name = weatherData.value.location.name;
+  if (!weatherData.value) return
+  const name = weatherData.value.location.name
 
   if (!savedLocations.value.includes(name)) {
-    savedLocations.value.push(name);
-    updateLocalStorage();
+    savedLocations.value.push(name)
+    updateLocalStorage()
   }
 }
 
-
 function loadSavedLocation(loc) {
-  handleSearch(loc);
+  handleSearch(loc)
 }
-
 
 function removeLocation(loc) {
-  savedLocations.value = savedLocations.value.filter(l => l !== loc);
-  updateLocalStorage();
+  savedLocations.value = savedLocations.value.filter(l => l !== loc)
+  updateLocalStorage()
 }
 
-provide('savedLocations', savedLocations);
+const hasWeatherData = computed(() => !!weatherData.value)
 
 
+const backgroundClass = computed(() => {
+  const data = weatherData.value
+  if (!data || !data.current || !data.location) return 'bg-default'
+
+  const condition = data.current.condition.text.toLowerCase()
+  const tempF = data.current.temp_f
+  const isDay = data.current.is_day === 1
+
+  if (condition.includes('rain')) return 'bg-rain'
+  if (tempF < 41) return 'bg-cold'   // < ~5°C
+  if (tempF > 77) return 'bg-warm'   // > ~25°C
+
+  return isDay ? 'bg-day' : 'bg-night'
+})
 
 
-provide('weatherData', weatherData);
-provide('currentLocation', currentLocation);
+provide('weatherData', weatherData)
+provide('currentLocation', currentLocation)
+provide('savedLocations', savedLocations)
 </script>
-
 
 <template>
   <div :class="['app', backgroundClass]">
@@ -71,8 +81,8 @@ provide('currentLocation', currentLocation);
         <div class="brand">
           <h1 class="app-title">Clear Sky Weather App</h1>
           <p class="welcome-subtitle">
-          Search for a city to see current weather, hourly chart, and 5-day forecast.
-         </p>
+            Welcome to Clear Sky, your weather app for quick, accurate forecasts. Search by city or ZIP code and save locations to view current weather, hourly trends, and a 5-day outlook.
+          </p>
         </div>
 
         <nav class="nav">
@@ -84,7 +94,12 @@ provide('currentLocation', currentLocation);
 
       <section class="controls">
         <SearchBar @search="handleSearch" />
-        <button class="save-btn" v-if="weatherData" @click="saveCurrentLocation">
+  
+        <button
+          class="save-btn"
+          v-if="hasWeatherData"
+          @click="saveCurrentLocation"
+        >
           Save location
         </button>
       </section>
@@ -113,7 +128,6 @@ provide('currentLocation', currentLocation);
   background-position: center;
   color: #f9fafb;
 }
-
 
 .shell {
   min-height: 100vh;
@@ -147,9 +161,10 @@ provide('currentLocation', currentLocation);
   font-weight: 600;
 }
 
-.app-subtitle {
-  font-size: 0.8rem;
+.welcome-subtitle {
+  font-size: 0.85rem;
   opacity: 0.85;
+  margin-top: -0.1rem;
 }
 
 .nav {
@@ -160,10 +175,10 @@ provide('currentLocation', currentLocation);
 .nav a {
   color: #e5e7eb;
   text-decoration: none;
-  padding: 0.5rem 1rem;    
-  font-size: 1.15rem;       
+  padding: 0.5rem 1rem;
+  font-size: 1.15rem;
   font-weight: 600;
-  border-radius: 0.75rem;   
+  border-radius: 0.75rem;
   transition: background 0.2s ease, color 0.2s ease;
 }
 
@@ -245,7 +260,6 @@ provide('currentLocation', currentLocation);
 .bg-warm {
   background-image: url('/images/warm.jpg');
 }
-
 
 @media (max-width: 768px) {
   .layout {
