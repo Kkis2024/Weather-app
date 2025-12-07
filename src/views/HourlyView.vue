@@ -9,7 +9,8 @@ import {
   Title,
   Tooltip,
   Legend,
-  BarElement
+  BarElement,
+  BarController 
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
 
@@ -19,6 +20,7 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
+  BarController,
   Title,
   Tooltip,
   Legend
