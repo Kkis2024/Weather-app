@@ -1,7 +1,10 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
-// https://vite.dev/config/
+
+const repoName = 'https://github.com/Kkis2024/Weather-app.git'
+
 export default defineConfig({
   plugins: [vue()],
+  base: `/${repoName}/`
 })
