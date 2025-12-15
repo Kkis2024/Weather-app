@@ -1,11 +1,12 @@
 <template>
- 
   <section v-if="data" class="panel">
     <header class="panel-header">
       <h2 class="location">
-        {{ data.location.name }}, {{ data.location.country }}
+        {{ data.location.name }},
+        {{ data.location.region }},
+        {{ data.location.country }}
       </h2>
-      <p class="updated">Local time: {{ data.localtime }}</p>
+      <p class="updated">Local time: {{ data.location.localtime }}</p>
     </header>
 
     <div class="today-main">
@@ -22,37 +23,27 @@
       </div>
 
       <div class="today-extra">
-        <p>
-          Feels like:
-          <strong>{{ Math.round(data.current.feelslike_f) }}°F</strong>
-        </p>
+        <p>Feels like: <strong>{{ Math.round(data.current.feelslike_f) }}°F</strong></p>
         <p>Humidity: <strong>{{ data.current.humidity }}%</strong></p>
         <p>Wind: <strong>{{ data.current.wind_mph }} mph</strong></p>
       </div>
     </div>
   </section>
 
-
   <section v-else class="panel">
     <h2>Welcome</h2>
-    <p>Search for a city above to see current weather, hourly chart, and 5-day forecast.</p>
+    <p>Search for a city above to see current weather, hourly chart, and 3-day forecast.</p>
   </section>
 </template>
 
 <script setup>
 import { inject, computed } from 'vue'
 
+const weatherData = inject('weatherData') // this should be a ref provided by App.vue
 
-const weatherDataRef = inject('weatherData')
+const data = computed(() => weatherData?.value ?? null)
 
-const data = computed(() => {
-  return weatherDataRef?.value ?? null
-})
-
-
-const today = computed(() => {
-  return data.value?.forecast?.forecastday?.[0] ?? null
-})
+const today = computed(() => data.value?.forecast?.forecastday?.[0] ?? null)
 </script>
 
 <style scoped>

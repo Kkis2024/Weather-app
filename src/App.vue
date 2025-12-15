@@ -81,14 +81,14 @@ provide('savedLocations', savedLocations)
         <div class="brand">
           <h1 class="app-title">Clear Sky Weather App</h1>
           <p class="welcome-subtitle">
-            Welcome to Clear Sky, your weather app for quick, accurate forecasts. Search by city or ZIP code and save locations to view current weather, hourly trends, and a 5-day outlook.
+            Welcome to Clear Sky, your weather app for quick, accurate forecasts. Search by city or ZIP code and save locations to view current weather, hourly trends, and a 3-day outlook.
           </p>
         </div>
 
         <nav class="nav">
           <RouterLink to="/">Today</RouterLink>
           <RouterLink to="/hourly">Hourly</RouterLink>
-          <RouterLink to="/forecast">5 Day</RouterLink>
+          <RouterLink to="/forecast">3 Day</RouterLink>
         </nav>
       </header>
 

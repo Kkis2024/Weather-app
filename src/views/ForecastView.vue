@@ -1,12 +1,18 @@
 <script setup>
-import { inject } from 'vue'
+import { inject, computed } from 'vue'
 
 const weatherData = inject('weatherData')
+
+// unwrap ref safely
+const data = computed(() => weatherData?.value ?? null)
+
+// always show only 3 days
+const days = computed(() => data.value?.forecast?.forecastday?.slice(0, 3) ?? [])
 </script>
 
 <template>
-  <div v-if="weatherData && weatherData.forecast">
-    <h1>5 Day Forecast</h1>
+  <div v-if="days.length">
+    <h1>3 Day Forecast</h1>
 
     <table class="forecast-table">
       <thead>
@@ -17,30 +23,25 @@ const weatherData = inject('weatherData')
           <th>Low (°F)</th>
         </tr>
       </thead>
+
       <tbody>
-        <tr
-          v-for="day in weatherData.forecast.forecastday"
-          :key="day.date"
-        >
+        <tr v-for="day in days" :key="day.date">
           <td>{{ day.date }}</td>
 
           <td class="condition-cell">
-            <img
-              :src="day.day.condition.icon"
-              :alt="day.day.condition.text"
-            />
+            <img :src="day.day.condition.icon" :alt="day.day.condition.text" />
             <span>{{ day.day.condition.text }}</span>
           </td>
 
           <td>{{ Math.round(day.day.maxtemp_f) }}</td>
           <td>{{ Math.round(day.day.mintemp_f) }}</td>
         </tr>
-     </tbody>
+      </tbody>
     </table>
   </div>
 
   <div v-else>
-    <h2>Please search for a location to view the 5-day forecast.</h2>
+    <h2>Please search for a location to view the 3-day forecast.</h2>
   </div>
 </template>
 
